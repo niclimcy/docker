@@ -24,7 +24,7 @@ services:
       - valkey
 
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     restart: always
     volumes:
       - db:/var/lib/postgresql/data
