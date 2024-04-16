@@ -1,0 +1,46 @@
+services:
+  app:
+    image: nextcloud:stable
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+      - /mnt/data/nc:/var/www/html/data
+    ports:
+      - 31338:80
+    hostname: cloud.niclimcy.com
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=${PGSQL_USER}
+      - POSTGRES_PASSWORD=${PGSQL_PASSWORD}
+      - POSTGRES_DB=${PGSQL_DB}
+      - REDIS_HOST=valkey
+      - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_TRUSTED_DOMAINS}
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES}
+      - OVERWRITEPROTOCOL=https
+      - OVERWRITEHOST=${OVERWRITEHOST}
+      - NEXTCLOUD_UPDATE=1
+    depends_on:
+      - db
+      - valkey
+
+  db:
+    image: postgres:16
+    restart: always
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=${PGSQL_USER}
+      - POSTGRES_PASSWORD=${PGSQL_PASSWORD}
+      - POSTGRES_DB=${PGSQL_DB}
+
+  valkey:
+    image: valkey/valkey:7.2-alpine
+    restart: always
+    volumes:
+      - valkey:/data
+
+volumes:
+  db:
+  valkey:
+  nextcloud:
