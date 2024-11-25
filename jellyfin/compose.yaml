@@ -2,7 +2,6 @@ services:
   jellyfin:
     image: jellyfin/jellyfin
     container_name: jellyfin
-    network_mode: 'host'
     volumes:
       - ${JELLYFIN_CONFIG_DIR}:/config
       - ${JELLYFIN_CACHE_DIR}:/cache
