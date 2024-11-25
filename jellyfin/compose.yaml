@@ -12,4 +12,4 @@ services:
     environment:
       - JELLYFIN_PublishedServerUrl=${JELLYFIN_PublishedServerUrl}
     ports:
-      - 8920:8920 # https
+      - 8096:8096 # https
