@@ -7,7 +7,7 @@ services:
       - /mnt/data/nc:/var/www/html/data
     ports:
       - 31338:80
-    hostname: cloud.niclimcy.com
+    hostname: ${OVERWRITEHOST}
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_USER=${PGSQL_USER}
