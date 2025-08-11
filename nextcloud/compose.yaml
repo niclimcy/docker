@@ -16,14 +16,14 @@ services:
       APACHE_IP_BINDING: 127.0.0.1
       SKIP_DOMAIN_VALIDATION: true
       NEXTCLOUD_DATADIR: /mnt/data/nc
-      NEXTCLOUD_ENABLE_NVIDIA_GPU: true
     security_opt: ["label:disable"]
-  nextcloud-aio-caddy:
+
+  caddy:
     build:
       context: .
       dockerfile: Caddy.Dockerfile
     depends_on:
-      nextcloud-aio-tailscale:
+      tailscale:
         condition: service_healthy
     restart: unless-stopped
     environment:
@@ -45,8 +45,9 @@ services:
         source: tailscale_sock
         target: /var/run/tailscale/ # Mount the volume for /var/run/tailscale/tailscale.sock
         read_only: true
-    network_mode: service:nextcloud-aio-tailscale
-  nextcloud-aio-tailscale:
+    network_mode: service:tailscale
+
+  tailscale:
     image: tailscale/tailscale:latest
     environment:
       TS_HOSTNAME: ${TS_HOSTNAME}
@@ -76,15 +77,11 @@ volumes:
   nextcloud_aio_mastercontainer:
     name: nextcloud_aio_mastercontainer # This line cannot be changed.
   caddy_certs:
-    name: caddy_certs
-  caddy_data:
-    name: caddy_data
   caddy_config:
-    name: caddy_config
+  caddy_data:
   tailscale:
-    name: tailscale
   tailscale_sock:
-    name: tailscale_sock
+
 networks:
   nextcloud-aio:
     name: nextcloud-aio
@@ -93,3 +90,6 @@ networks:
     driver_opts:
       com.docker.network.driver.mtu: "1280" # You can set this to 9001 etc. to use jumbo frames, but packets may be dropped.
       com.docker.network.bridge.host_binding_ipv4: "127.0.0.1" # Harden aio
+      com.docker.network.bridge.enable_icc: "true"
+      com.docker.network.bridge.default_bridge: "false"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
